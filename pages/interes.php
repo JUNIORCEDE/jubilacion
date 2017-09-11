@@ -4,7 +4,8 @@ require_once '../model.php';
 // Logica
 $model = new Model();
 // se obtiene la cedula por medio de la url
-$cedula = (int)(!isset($_GET['cedula'])) ? null : $_GET['cedula'];;
+$cedula = (int)(!isset($_GET['cedula'])) ? null : $_GET['cedula'];
+$msgError = (int)(!isset($_GET['error'])) ? null : $_GET['error'];
 //si presiona consultar se envia la cedula
 if(isset($_POST['Consultar']))
 {
@@ -16,6 +17,7 @@ elseif(isset($_POST['Nuevo'])){
 $compag =(int)(!isset($_GET['pag'])) ? 1 : $_GET['pag'];
 $TotalRegistro = 0;
 $CantidadMostrar = 20;
+$cont = 0;
 $consultavistas ="SELECT * FROM interes ORDER BY interes.ID_INTERES ASC LIMIT ".(($compag-1)*$CantidadMostrar)." , ".$CantidadMostrar;
 if (!is_null($cedula) and !($cedula=="") and ($cedula!=0)){
     $consulta = $model->Listar("SELECT * FROM interes where CEDULA = ".$cedula);
@@ -28,9 +30,8 @@ else{
     $cont = count($model->result);
     $TotalRegistro = ceil($cont/$CantidadMostrar);
 }
-
 if($cont<1){
-    echo '<script type="text/javascript">location.href="?pag=1";</script>';
+    echo '<script type="text/javascript">location.href="?pag=1&error=true";</script>';
 }
 elseif ($compag > $TotalRegistro) {
     echo '<script type="text/javascript">location.href="?pag='.$TotalRegistro.'&cedula='.$cedula.'";</script>';
@@ -95,6 +96,13 @@ elseif($compag<1){
                 </form>
                 </div>
                 </div>
+                <?php  
+                if ($msgError) {
+                    echo '<div class="alert alert-danger">';
+                    echo '<strong>Error!</strong> Error cédula no encontrada se mostrará todos los datos paginados.';
+                    echo '</div>';
+                }
+                ?>
                 <table class="table table-bordered table-condensed table-hover">
                     <thead>
                         <tr>
