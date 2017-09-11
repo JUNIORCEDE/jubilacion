@@ -2,8 +2,6 @@
 require_once '../model.php';
 
 // Logica
-//$aport = new Aporte();
-//$model = new AporteModel();
 $model = new Model();
 // se obtiene la cedula por medio de la url
 $cedula = (int)(!isset($_GET['cedula'])) ? null : $_GET['cedula'];;
@@ -32,6 +30,9 @@ else{
 }
 
 if ($compag > $TotalRegistro) {
+    echo '<script type="text/javascript">location.href="?pag='.$TotalRegistro.'&cedula='.$cedula.'";</script>';
+}
+elseif($compag<1){
     echo '<script type="text/javascript">location.href="?pag=1&cedula='.$cedula.'";</script>';
 }
 
@@ -123,8 +124,10 @@ if ($compag > $TotalRegistro) {
                     //Operacion matematica para botón siguiente y atrás 
                     $IncrimentNum =(($compag +1)<=$TotalRegistro)?($compag +1):1;
                     $DecrementNum =(($compag -1))<1?1:($compag -1);
-                ?>
-                    <ul><li><a href=<?php echo '?pag='.$DecrementNum."&cedula=".$cedula;?> >◀</a></li>
+                ?>  <center>
+                    <ul>
+                    <li title='Primera Pagina'><a href=<?php echo '?pag=1&cedula='.$cedula;?> >◀◀</a></li>    
+                    <li title='Anterior'><a href=<?php echo '?pag='.$DecrementNum."&cedula=".$cedula;?> >◀</a></li>
                 <?php
                    //Se resta y suma con el numero de pag actual con el cantidad de 
                     //números  a mostrar
@@ -140,13 +143,14 @@ if ($compag > $TotalRegistro) {
                         if($i<=$TotalRegistro){
                             //Validamos la pag activo
                           if($i==$compag){
-                           echo "<li class=\"active pag\"><a href=\"?pag=".$i."&cedula=".$cedula."\">".$i."</a></li>";
+                           echo "<li title='Pagina".$i."' class=\"active pag\"><a href=\"?pag=".$i."&cedula=".$cedula."\">".$i."</a></li>";
                           }else {
-                            echo "<li class=\"pag\"><a href=\"?pag=".$i."&cedula=".$cedula."\">".$i."</a></li>";
+                            echo "<li title='Pagina".$i."' class=\"pag\"><a href=\"?pag=".$i."&cedula=".$cedula."\">".$i."</a></li>";
                           }             
                         }
                      }
-                    echo "<li class=\"btnp pag\"><a href=\"?pag=".$IncrimentNum."&cedula=".$cedula."\">▶</a></li></ul>";
+                    echo "<li title='Siguiente' class=\"btnp pag\"><a href=\"?pag=".$IncrimentNum."&cedula=".$cedula."\">▶</a></li>";
+                    echo "<li title='Ultimo' class=\"btnp pag\"><a href=\"?pag=".$TotalRegistro."&cedula=".$cedula."\">▶▶</a></li></ul></center>";
                      } 
                  ?>
         </div>
