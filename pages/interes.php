@@ -29,7 +29,10 @@ else{
     $TotalRegistro = ceil($cont/$CantidadMostrar);
 }
 
-if ($compag > $TotalRegistro) {
+if($cont<1){
+    echo '<script type="text/javascript">location.href="?pag=1";</script>';
+}
+elseif ($compag > $TotalRegistro) {
     echo '<script type="text/javascript">location.href="?pag='.$TotalRegistro.'&cedula='.$cedula.'";</script>';
 }
 elseif($compag<1){
