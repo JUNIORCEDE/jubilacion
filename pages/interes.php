@@ -18,12 +18,12 @@ $compag =(int)(!isset($_GET['pag'])) ? 1 : $_GET['pag'];
 $TotalRegistro = 0;
 $CantidadMostrar = 20;
 $cont = 0;
-$consultavistas ="SELECT * FROM interes ORDER BY interes.ID_INTERES ASC LIMIT ".(($compag-1)*$CantidadMostrar)." , ".$CantidadMostrar;
+$consultavistas ="SELECT * FROM interes ORDER BY interes.ANIO ASC LIMIT ".(($compag-1)*$CantidadMostrar)." , ".$CantidadMostrar;
 if (!is_null($cedula) and !($cedula=="") and ($cedula!=0)){
     $consulta = $model->Listar("SELECT * FROM interes where CEDULA = ".$cedula);
     $cont = count($model->result);
     $TotalRegistro = ceil($cont/$CantidadMostrar);
-    $consultavistas ="SELECT * FROM interes where CEDULA = ".$cedula." ORDER BY interes.ID_INTERES ASC LIMIT ".(($compag-1)*$CantidadMostrar)." , ".$CantidadMostrar;
+    $consultavistas ="SELECT * FROM interes where CEDULA = ".$cedula." ORDER BY interes.ANIO ASC LIMIT ".(($compag-1)*$CantidadMostrar)." , ".$CantidadMostrar;
 }
 else{
     $model->Listar("SELECT * FROM interes");

@@ -24,7 +24,8 @@ $cedula = null;
         <link href="../style.css" rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
         <script type="text/javascript" href="../bootstrap/js/bootstrap.min.js"></script>
-		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+        <link rel="stylesheet" href="../bootstrap/css/paginacion.css">
         <meta charset="utf-8">
 	</head>
     <body style="padding:25px;">

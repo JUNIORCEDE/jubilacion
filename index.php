@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'model.php';
 
 $model = new Model();
@@ -55,7 +55,7 @@ elseif($compag<1){
     <h4>Tablas restauradas</h4><br>
         <div class="menu" >
             <ul class="horizontal">
-                <li><a href="index.php">Empleado</a></li>
+                <li class="active"><a href="index.php">Empleado</a></li>
                 <li><a href="pages/interes.php">Interes</a></li>
                 <li><a href="pages/liquidacion.php">Liquidaciones</a></li>
                 <li><a href="pages/prestamo.php">Prestamos</a></li>

@@ -1,10 +1,48 @@
 <?php
-require_once '../entidades/prestamos_mov.entidad.php';
-require_once '../models/prestamos_mov.model.php';
+require_once '../model.php';
 
-// Logica
-$prest = new Prestamo_Mov();
-$model = new Prestamo_MovModel();
+$model = new Model();
+// se obtiene la cedula por medio de la url
+$cedula = (int)(!isset($_GET['cedula'])) ? null : $_GET['cedula'];
+$msgError = (int)(!isset($_GET['error'])) ? null : $_GET['error'];
+
+if(isset($_POST['Consultar']))
+{
+    $cedula = $_POST['Cedula'];
+}
+elseif(isset($_POST['Nuevo'])){
+    $cedula = null;
+}
+$compag =(int)(!isset($_GET['pag'])) ? 1 : $_GET['pag'];
+$TotalRegistro = 0;
+$CantidadMostrar = 20;
+$cont = 0;
+$limite = (($compag-1)*$CantidadMostrar);
+$orden = " ORDER BY anio ASC, FIELD( mes, 'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE' ) LIMIT ".(($compag-1)*$CantidadMostrar)." , ".$CantidadMostrar;
+$consultavistas ="SELECT * FROM prestamos_movimientos ".$orden;
+if (!is_null($cedula) and !($cedula=="") and ($cedula!=0)){
+    $consulta = $model->Listar("SELECT * FROM prestamos_movimientos where CEDULA = ".$cedula);
+    $cont = count($model->result);
+    $TotalRegistro = ceil($cont/$CantidadMostrar);
+    $consultavistas ="SELECT * FROM prestamos_movimientos where CEDULA = ".$cedula." ".$orden;
+}
+else{
+    $model->Listar("SELECT * FROM prestamos");
+    //se cae la pagina si pongo $model->Listar("SELECT * FROM prestamos_movimientos");
+    //solo se cae aqui en la busqueda por cedula no .-.
+    $cont = count($model->result);
+    echo $cont;
+    $TotalRegistro = ceil($cont/$CantidadMostrar);
+}
+if($cont<1){
+    echo '<script type="text/javascript">location.href="?pag=1&error=true";</script>';
+}
+elseif ($compag > $TotalRegistro) {
+    echo '<script type="text/javascript">location.href="?pag='.$TotalRegistro.'&cedula='.$cedula.'";</script>';
+}
+elseif($compag<1){
+    echo '<script type="text/javascript">location.href="?pag=1&cedula='.$cedula.'";</script>';
+}
 ?>
 
 <!DOCTYPE html>
@@ -14,6 +52,8 @@ $model = new Prestamo_MovModel();
         <link href="../style.css" rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
         <script type="text/javascript" href="../bootstrap/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+        <link rel="stylesheet" href="../bootstrap/css/paginacion.css">
         <meta charset="utf-8">
 	</head>
     <body style="padding:25px;">
@@ -36,6 +76,34 @@ $model = new Prestamo_MovModel();
             </ul>
         </div>
         <br><br><br>
+         <div class="pure-g">
+            <div class="pure-u-1-12">
+                <form method="post" class="pure-form pure-form-stacked" style="margin-bottom:30px;">
+                    <table>
+                        <tr>   
+                            <td><label>Cedula: </label></td>
+                            <td></td><td></td>
+                            <td><input type="text" name="Cedula" value="<?php echo $cedula; ?>" /></td>
+                        </tr>
+                    </table>        
+                    <br>
+                    <table>                     
+                    <tr>
+                    <td><button type="submit" name="Consultar" class="pure-button pure-button-primary">Consultar</button></td>
+                    
+                    <td><button type="submit" name="Nuevo" class="pure-button pure-button-primary">Nuevo</button></td>
+                    </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+            <?php  
+                if ($msgError) {
+                    echo '<div class="alert alert-danger">';
+                    echo '<strong>Error!</strong> Cédula no encontrada se mostrará todos los datos paginados.';
+                    echo '</div>';
+                }
+                ?>
         <div>
                 <table class="table table-bordered table-condensed table-hover">
                     <thead>
@@ -55,25 +123,60 @@ $model = new Prestamo_MovModel();
                             <th style="text-align:left;">Saldo</th>
                         </tr>
                     </thead>
-                    <?php foreach($model->Listar() as $r): ?>
+                    <?php $model->Listar($consultavistas); 
+                    foreach( $model->result as $r): ?>
                         <tr>
-                            <td><?php echo $r->__GET('codigo_movimiento'); ?></td>
-                            <td><?php echo $r->__GET('cedula'); ?></td>
-                            <td><?php echo $r->__GET('numero'); ?></td>
-                            <td><?php echo $r->__GET('monto'); ?></td>
-                            <td><?php echo $r->__GET('cuota'); ?></td>
-                            <td><?php echo $r->__GET('capital'); ?></td>
-                            <td><?php echo $r->__GET('interes'); ?></td>
-                            <td><?php echo $r->__GET('mes'); ?></td>
-                            <td><?php echo $r->__GET('anio'); ?></td>
-                            <td><?php echo $r->__GET('estado'); ?></td>
-                            <td><?php echo $r->__GET('id_prest'); ?></td>
-                            <td><?php echo $r->__GET('marca'); ?></td>
-                            <td><?php echo $r->__GET('saldo'); ?></td>
+                            <td><?php echo $r->codigo_movimiento; ?></td>
+                            <td><?php echo $r->cedula; ?></td>
+                            <td><?php echo $r->numero; ?></td>
+                            <td><?php echo $r->monto; ?></td>
+                            <td><?php echo $r->cuota; ?></td>
+                            <td><?php echo $r->capital; ?></td>
+                            <td><?php echo $r->interes; ?></td>
+                            <td><?php echo $r->mes; ?></td>
+                            <td><?php echo $r->anio; ?></td>
+                            <td><?php echo $r->estado; ?></td>
+                            <td><?php echo $r->id_prest; ?></td>
+                            <td><?php echo $r->marca; ?></td>
+                            <td><?php echo $r->saldo; ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </table>
-
+                <?php
+                    if ($TotalRegistro>1) {
+                    /*Sector de Paginacion */
+                    //Operacion matematica para botón siguiente y atrás 
+                    $IncrimentNum =(($compag +1)<=$TotalRegistro)?($compag +1):1;
+                    $DecrementNum =(($compag -1))<1?1:($compag -1);
+                ?>  <center>
+                    <ul>
+                    <li title='Primera Pagina'><a href=<?php echo '?pag=1&cedula='.$cedula;?> >◀◀</a></li>    
+                    <li title='Anterior'><a href=<?php echo '?pag='.$DecrementNum."&cedula=".$cedula;?> >◀</a></li>
+                <?php
+                   //Se resta y suma con el numero de pag actual con el cantidad de 
+                    //números  a mostrar
+                     $Desde=$compag-(ceil($CantidadMostrar/2)-1);
+                     $Hasta=$compag+(ceil($CantidadMostrar/2)-1);
+                     //Se valida
+                     $Desde=($Desde<1)?1: $Desde;
+                     $Hasta=($Hasta<$CantidadMostrar)?$CantidadMostrar:$Hasta;
+                     //Se muestra los números de paginas
+                     for($i=$Desde; $i<=$Hasta;$i++){
+                        //Se valida la paginacion total
+                        //de registros
+                        if($i<=$TotalRegistro){
+                            //Validamos la pag activo
+                          if($i==$compag){
+                           echo "<li title='Pagina".$i."' class=\"active pag\"><a href=\"?pag=".$i."&cedula=".$cedula."\">".$i."</a></li>";
+                          }else {
+                            echo "<li title='Pagina".$i."' class=\"pag\"><a href=\"?pag=".$i."&cedula=".$cedula."\">".$i."</a></li>";
+                          }             
+                        }
+                     }
+                    echo "<li title='Siguiente' class=\"btnp pag\"><a href=\"?pag=".$IncrimentNum."&cedula=".$cedula."\">▶</a></li>";
+                    echo "<li title='Ultimo' class=\"btnp pag\"><a href=\"?pag=".$TotalRegistro."&cedula=".$cedula."\">▶▶</a></li></ul></center>";
+                     } 
+                 ?>
         </div>
 
     </body>

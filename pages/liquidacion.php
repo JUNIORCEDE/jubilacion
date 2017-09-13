@@ -16,13 +16,13 @@ elseif(isset($_POST['Nuevo'])){
 $compag =(int)(!isset($_GET['pag'])) ? 1 : $_GET['pag'];
 $TotalRegistro = 0;
 $CantidadMostrar = 20;
-$cont = 1;
-$consultavistas ="SELECT * FROM liguidaciones ORDER BY liguidaciones.codigo ASC LIMIT ".(($compag-1)*$CantidadMostrar)." , ".$CantidadMostrar;
+$cont = 0;
+$consultavistas ="SELECT * FROM liguidaciones ORDER BY liguidaciones.fecha ASC LIMIT ".(($compag-1)*$CantidadMostrar)." , ".$CantidadMostrar;
 if (!is_null($cedula) and !($cedula=="") and ($cedula!=0)){
     $consulta = $model->Listar("SELECT * FROM liguidaciones where CEDULA = ".$cedula);
     $cont = count($model->result);
     $TotalRegistro = ceil($cont/$CantidadMostrar);
-    $consultavistas ="SELECT * FROM liguidaciones where CEDULA = ".$cedula." ORDER BY liguidaciones.codigo ASC LIMIT ".(($compag-1)*$CantidadMostrar)." , ".$CantidadMostrar;
+    $consultavistas ="SELECT * FROM liguidaciones where CEDULA = ".$cedula." ORDER BY liguidaciones.fecha ASC LIMIT ".(($compag-1)*$CantidadMostrar)." , ".$CantidadMostrar;
 }
 else{
     $model->Listar("SELECT * FROM liguidaciones");
@@ -42,15 +42,15 @@ elseif($compag<1){
 
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <title>Datos</title>
+	<head>
+		<title>Datos</title>
         <link href="../style.css" rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
         <script type="text/javascript" href="../bootstrap/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
         <link rel="stylesheet" href="../bootstrap/css/paginacion.css">
         <meta charset="utf-8">
-    </head>
+	</head>
     <body style="padding:25px;">
     <h4>Tablas restauradas</h4><br>
         <div class="menu" >
